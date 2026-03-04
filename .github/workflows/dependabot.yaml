@@ -1,6 +1,6 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/"
+    directory: "/2. kube_data_and_volumes"
     schedule:
       interval: "weekly"
