@@ -1,0 +1,33 @@
+name: DAST with OWASP ZAP # Name of the pipeline shown in Actions tab
+
+on:
+  push:
+    branches: [main] # Run this pipeline whenever code is pushed to main branch
+
+jobs:
+  dast: # Job name
+    runs-on: ubuntu-latest # Run on a fresh Ubuntu virtual machine on GitHub servers
+
+    steps:
+      # Step 1 - Download your code onto the virtual machine
+      - uses: actions/checkout@v3
+
+      # Step 2 - Install all npm packages from your package.json
+      - name: Install dependencies
+        run: npm install
+
+      # Step 3 - Start your Node.js app in background (&)
+      #          sleep 10 = wait 10 seconds for app to fully start
+      #          before ZAP tries to scan it
+      - name: Start Node.js app
+        run: |
+          node server.js &
+          sleep 10
+
+      # Step 4 - Run OWASP ZAP baseline scan against your running app
+      #          baseline scan = quick scan, checks common vulnerabilities
+      #          target = the URL ZAP will attack and test
+      - name: Run OWASP ZAP scan
+        uses: zaproxy/action-baseline@v0.10.0
+        with:
+          target: "http://localhost:3000" # Your app URL on the virtual machine
