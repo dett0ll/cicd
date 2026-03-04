@@ -1,7 +1,13 @@
 const express = require("express");
 const fs = require("fs");
+const RateLimit = require("express-rate-limit");
 const app = express();
 const port = 3000;
+
+const submitLimiter = RateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 submit requests per windowMs
+});
 
 //when you submit html form it will be url encoded.
 //this tell express to read form data, parse it and put it in req.body
@@ -16,7 +22,7 @@ app.get("/", (req, res) => {
   `);
 });
 
-app.post("/submit", (req, res) => {
+app.post("/submit", submitLimiter, (req, res) => {
   const username = req.body.username;
   fs.appendFile("data.txt", username + "\n", () => {
     res.send("username saved");
