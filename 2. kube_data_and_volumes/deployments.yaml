@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment #creates deployment object in kuberetes
+metadata:
+  name: uvolumecluster #name of deployment
+  labels: #deployment label
+    app: volumepod
+spec: #deployment speicification
+  replicas: 1 #1 pod
+  selector: #deployment manages pods having label volumepod
+    matchLabels:
+      app: volumepod
+  template: #pod template used to create pod
+    metadata:
+      labels:
+        app: volumepod #label of each pod
+    spec: #config of pod
+      containers:
+        - name: nginx
+          image: nginx:1.14.2
+          ports:
+            - containerPort: 80
